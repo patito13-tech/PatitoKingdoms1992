@@ -7,95 +7,47 @@
   <style>
     *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}
     body{background:#080b12;color:#f4f6fb;min-height:100vh}
-    header{padding:28px 18px;text-align:center;background:linear-gradient(135deg,#111827,#1f2937,#78350f);border-bottom:1px solid #374151}
-    header h1{font-size:34px;margin-bottom:8px;color:#facc15}
-    header p{color:#d1d5db;font-size:15px}
-    .container{max-width:1200px;margin:auto;padding:22px}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px;margin-bottom:20px}
-    .card{background:#111827;border:1px solid #374151;border-radius:16px;padding:18px;box-shadow:0 10px 25px rgba(0,0,0,.25)}
-    .card h3{color:#facc15;margin-bottom:8px;font-size:15px}
-    .number{font-size:30px;font-weight:bold}
-    textarea{width:100%;height:190px;background:#030712;color:#e5e7eb;border:1px solid #374151;border-radius:14px;padding:14px;font-size:14px;resize:vertical;outline:none}
-    button{background:#facc15;color:#111827;border:0;border-radius:12px;padding:13px 18px;font-weight:bold;cursor:pointer;margin-top:12px;margin-right:8px}
-    button:hover{background:#fde047}
-    .results,.compare-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:15px;margin-top:20px}
-    .tag{display:inline-block;padding:5px 9px;border-radius:999px;font-size:12px;margin:3px 0;font-weight:bold}
-    .ok{background:#064e3b;color:#a7f3d0}.warn{background:#78350f;color:#fde68a}.bad{background:#7f1d1d;color:#fecaca}.info{background:#1e3a8a;color:#bfdbfe}.new{background:#14532d;color:#bbf7d0}.gone{background:#4c0519;color:#fecdd3}
-    .player{border-bottom:1px solid #374151;padding:10px 0;font-size:14px;line-height:1.5}
-    .help{color:#9ca3af;font-size:13px;margin:10px 0 14px;line-height:1.5}
-    footer{text-align:center;color:#6b7280;padding:20px;font-size:13px}
+    header{padding:30px 18px;text-align:center;background:linear-gradient(135deg,#111827,#1f2937,#78350f);border-bottom:1px solid #374151}
+    header h1{font-size:34px;margin-bottom:8px;color:#facc15} header p{color:#d1d5db;font-size:15px}
+    .container{max-width:1220px;margin:auto;padding:22px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px;margin-bottom:20px}
+    .card{background:#111827;border:1px solid #374151;border-radius:16px;padding:18px;box-shadow:0 10px 25px rgba(0,0,0,.25)}.card h3{color:#facc15;margin-bottom:8px;font-size:15px}.number{font-size:30px;font-weight:bold}
+    textarea{width:100%;height:190px;background:#030712;color:#e5e7eb;border:1px solid #374151;border-radius:14px;padding:14px;font-size:14px;resize:vertical;outline:none;line-height:1.45}
+    button{background:#facc15;color:#111827;border:0;border-radius:12px;padding:12px 16px;font-weight:bold;cursor:pointer;margin:6px 6px 6px 0}.secondary{background:#1f2937;color:#e5e7eb;border:1px solid #4b5563}.danger{background:#7f1d1d;color:#fecaca}.success{background:#14532d;color:#bbf7d0}
+    button:hover{filter:brightness(1.12)}.results,.compare-grid,.actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:15px;margin-top:20px}.actions{margin-top:12px}
+    .tag{display:inline-block;padding:5px 9px;border-radius:999px;font-size:12px;margin:3px 0;font-weight:bold}.ok{background:#064e3b;color:#a7f3d0}.warn{background:#78350f;color:#fde68a}.bad{background:#7f1d1d;color:#fecaca}.info{background:#1e3a8a;color:#bfdbfe}.new{background:#14532d;color:#bbf7d0}.gone{background:#4c0519;color:#fecdd3}
+    .player{border-bottom:1px solid #374151;padding:10px 0;font-size:14px;line-height:1.5}.help{color:#9ca3af;font-size:13px;margin:10px 0 14px;line-height:1.5}.status{margin-top:10px;color:#a7f3d0;font-size:13px;min-height:18px}.title-row{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.small{font-size:12px;color:#9ca3af} footer{text-align:center;color:#6b7280;padding:20px;font-size:13px}
   </style>
 </head>
 <body>
-  <header>
-    <h1>🐥 Patito Kingdoms 1992</h1>
-    <p>IA Administradora del Reino para Rise of Kingdoms</p>
-  </header>
-
-  <main class="container">
-    <section class="grid">
-      <div class="card"><h3>Jugadores analizados</h3><div class="number" id="total">0</div></div>
-      <div class="card"><h3>Guerreros / útiles</h3><div class="number" id="activos">0</div></div>
-      <div class="card"><h3>Peso muerto</h3><div class="number" id="muertos">0</div></div>
-      <div class="card"><h3>Lista de salida</h3><div class="number" id="salida">0</div></div>
-    </section>
-
-    <section class="card">
-      <h2>📋 Pegar lista de jugadores</h2>
-      <p class="help">Formato por línea: Nombre | ID | Alianza | PoderM | AclamaciónM | MuertesM | DeadsM<br>Ejemplo: Patito | 123456 | GO92 | 85 | 4.5 | 600 | 2.1</p>
-      <textarea id="input" placeholder="Patito | 123456 | GO92 | 85 | 4.5 | 600 | 2.1&#10;Jugador2 | 987654 | GD92 | 90 | 1.2 | 80 | 0.3"></textarea>
-      <button onclick="analizar()">Analizar Reino con IA</button>
-    </section>
-
-    <section class="results">
-      <div class="card"><h3>✅ Jugadores útiles</h3><div id="listaActivos"></div></div>
-      <div class="card"><h3>⚠️ Riesgo / baja contribución</h3><div id="listaRiesgo"></div></div>
-      <div class="card"><h3>🚫 Lista de salida</h3><div id="listaSalida"></div></div>
-      <div class="card"><h3>📨 Correo sugerido</h3><div id="correo" class="help">Aquí aparecerá un mensaje automático para el reino.</div></div>
-    </section>
-
-    <section class="card" style="margin-top:22px">
-      <h2>🔁 Comparar semana anterior vs semana actual</h2>
-      <p class="help">Pega la lista anterior y la lista actual con el mismo formato. La IA detectará nuevos, migrados, regresos, subidas y bajadas de poder.</p>
-      <div class="compare-grid">
-        <div><h3>Semana anterior</h3><textarea id="semanaAnterior" placeholder="Jugador1 | 111 | GO92 | 80 | 2.5 | 250 | 1"></textarea></div>
-        <div><h3>Semana actual</h3><textarea id="semanaActual" placeholder="Jugador1 | 111 | GO92 | 83 | 3.0 | 280 | 1.2"></textarea></div>
-      </div>
-      <button onclick="compararSemanas()">Comparar semanas</button>
-    </section>
-
-    <section class="results">
-      <div class="card"><h3>🆕 Nuevos / volvieron</h3><div id="nuevos"></div></div>
-      <div class="card"><h3>🚪 Se fueron / no aparecen</h3><div id="idos"></div></div>
-      <div class="card"><h3>📈 Subieron poder</h3><div id="subieron"></div></div>
-      <div class="card"><h3>📉 Bajaron poder</h3><div id="bajaron"></div></div>
-    </section>
-  </main>
-
-  <footer>Creado para el Reino 1992 | Patito Kingdoms 1992</footer>
-
-  <script>
-    function requisito(poder){
-      if(poder < 40) return 0;if(poder < 50) return .5;if(poder < 55) return .8;if(poder < 60) return 1;if(poder < 65) return 1.3;if(poder < 70) return 1.7;if(poder < 75) return 2;if(poder < 80) return 2.5;if(poder < 85) return 3;if(poder < 90) return 4;if(poder < 95) return 5;if(poder < 100) return 6;if(poder < 105) return 7;return 8;
-    }
-    function parsear(texto){
-      return (texto||'').trim().split('\n').filter(x=>x.trim()).map(l=>{const p=l.split('|').map(x=>x.trim());return{nombre:p[0]||'Sin nombre',id:p[1]||'-',alianza:p[2]||'-',poder:parseFloat(p[3])||0,acl:parseFloat(p[4])||0,muertes:parseFloat(p[5])||0,deads:parseFloat(p[6])||0};});
-    }
-    function analizar(){
-      const jugadores=parsear(document.getElementById('input').value);let activos=[], riesgo=[], salida=[];
-      jugadores.forEach(j=>{j.req=requisito(j.poder);if(j.poder>=50&&j.acl<j.req*.5){j.estado='Candidato a salida';j.clase='bad';salida.push(j)}else if(j.poder>=50&&j.acl<j.req){j.estado='Baja contribución';j.clase='warn';riesgo.push(j)}else if(j.muertes>=300||j.deads>=1){j.estado='Guerrero activo';j.clase='ok';activos.push(j)}else{j.estado='Jugador útil / observar';j.clase='info';activos.push(j)}});
-      total.textContent=jugadores.length;activosEl=activos.length;document.getElementById('activos').textContent=activos.length;muertos.textContent=riesgo.length;salidaEl=salida.length;document.getElementById('salida').textContent=salida.length;pintar('listaActivos',activos);pintar('listaRiesgo',riesgo);pintar('listaSalida',salida);
-      correo.innerHTML=`📢 Aviso Reino 1992<br><br>Se informa que los jugadores con alto poder y baja aclamación serán revisados. Quienes no cumplan los requisitos mínimos deberán mejorar su contribución o podrán ser considerados para salida del reino.<br><br>Jugadores en lista de salida detectados: <b>${salida.length}</b>.<br><br>— Patito`;
-    }
-    function pintar(id,arr){const box=document.getElementById(id);if(!arr.length){box.innerHTML='<p class="help">Sin jugadores en esta categoría.</p>';return;}box.innerHTML=arr.map(j=>`<div class="player"><span class="tag ${j.clase||'info'}">${j.estado||'Detectado'}</span><br><b>${j.nombre}</b> | ID: ${j.id}<br>Alianza: ${j.alianza} | Poder: ${j.poder}M<br>Aclamación: ${j.acl}M ${j.req!==undefined?'/ Req: '+j.req+'M':''}</div>`).join('');}
-    function compararSemanas(){
-      const ant=parsear(document.getElementById('semanaAnterior').value), act=parsear(document.getElementById('semanaActual').value);
-      const mapaAnt=new Map(ant.map(j=>[j.id,j])), mapaAct=new Map(act.map(j=>[j.id,j]));
-      let nuevos=[], idos=[], subieron=[], bajaron=[];
-      act.forEach(j=>{const old=mapaAnt.get(j.id);if(!old){j.estado='Nuevo o volvió al reino';j.clase='new';nuevos.push(j)}else{const dif=+(j.poder-old.poder).toFixed(2);if(dif>=1){j.estado=`Subió +${dif}M de poder`;j.clase='ok';subieron.push(j)}if(dif<=-1){j.estado=`Bajó ${dif}M de poder`;j.clase='warn';bajaron.push(j)}}});
-      ant.forEach(j=>{if(!mapaAct.has(j.id)){j.estado='No aparece: posible migración o cambio de reino';j.clase='gone';idos.push(j)}});
-      pintar('nuevos',nuevos);pintar('idos',idos);pintar('subieron',subieron);pintar('bajaron',bajaron);
-    }
-  </script>
-</body>
-</html>
+<header><h1>🐥 Patito Kingdoms 1992</h1><p>IA Administradora del Reino para Rise of Kingdoms</p></header>
+<main class="container">
+  <section class="grid">
+    <div class="card"><h3>Jugadores analizados</h3><div class="number" id="total">0</div></div><div class="card"><h3>Guerreros / útiles</h3><div class="number" id="activos">0</div></div><div class="card"><h3>Peso muerto</h3><div class="number" id="muertos">0</div></div><div class="card"><h3>Lista de salida</h3><div class="number" id="salida">0</div></div>
+  </section>
+  <section class="card">
+    <div class="title-row"><h2>📋 Panel principal del reino</h2><span class="small" id="fechaActualizacion">Sin datos guardados</span></div>
+    <p class="help">Formato por línea: Nombre | ID | Alianza | PoderM | AclamaciónM | MuertesM | DeadsM</p>
+    <textarea id="input" placeholder="Patito | 123456 | GO92 | 85 | 4.5 | 600 | 2.1&#10;Jugador2 | 987654 | GD92 | 90 | 1.2 | 80 | 0.3"></textarea>
+    <button onclick="analizar()">Analizar Reino con IA</button><button class="success" onclick="guardar('input','pk_lista_actual')">Guardar lista actual</button><button class="secondary" onclick="cargar('input','pk_lista_actual')">Cargar lista actual</button><button class="danger" onclick="limpiarCampo('input')">Limpiar panel</button>
+    <div class="status" id="estadoGuardado"></div>
+  </section>
+  <section class="results"><div class="card"><h3>✅ Jugadores útiles</h3><div id="listaActivos"></div></div><div class="card"><h3>⚠️ Riesgo / baja contribución</h3><div id="listaRiesgo"></div></div><div class="card"><h3>🚫 Lista de salida</h3><div id="listaSalida"></div></div><div class="card"><h3>📨 Correo sugerido</h3><div id="correo" class="help">Aquí aparecerá un mensaje automático para el reino.</div></div></section>
+  <section class="card" style="margin-top:22px">
+    <div class="title-row"><h2>🔁 Comparar semana anterior vs semana actual</h2><span class="small">Control de migraciones, regresos y cambios</span></div>
+    <p class="help">Guarda tus listas por semana para detectar quién entró, quién salió, quién subió poder y quién bajó.</p>
+    <div class="compare-grid"><div><h3>Semana anterior</h3><textarea id="semanaAnterior" placeholder="Jugador1 | 111 | GO92 | 80 | 2.5 | 250 | 1"></textarea><button class="success" onclick="guardar('semanaAnterior','pk_semana_anterior')">Guardar anterior</button><button class="secondary" onclick="cargar('semanaAnterior','pk_semana_anterior')">Cargar anterior</button></div><div><h3>Semana actual</h3><textarea id="semanaActual" placeholder="Jugador1 | 111 | GO92 | 83 | 3.0 | 280 | 1.2"></textarea><button class="success" onclick="guardar('semanaActual','pk_semana_actual')">Guardar actual</button><button class="secondary" onclick="cargar('semanaActual','pk_semana_actual')">Cargar actual</button></div></div>
+    <button onclick="compararSemanas()">Comparar semanas</button><button class="secondary" onclick="pasarActualAAnterior()">Pasar actual a anterior</button><button class="danger" onclick="limpiarComparacion()">Limpiar comparación</button>
+    <div class="status" id="estadoComparacion"></div>
+  </section>
+  <section class="results"><div class="card"><h3>🆕 Nuevos / volvieron</h3><div id="nuevos"></div></div><div class="card"><h3>🚪 Se fueron / no aparecen</h3><div id="idos"></div></div><div class="card"><h3>📈 Subieron poder</h3><div id="subieron"></div></div><div class="card"><h3>📉 Bajaron poder</h3><div id="bajaron"></div></div></section>
+</main><footer>Creado para el Reino 1992 | Patito Kingdoms 1992</footer>
+<script>
+function requisito(p){if(p<40)return 0;if(p<50)return .5;if(p<55)return .8;if(p<60)return 1;if(p<65)return 1.3;if(p<70)return 1.7;if(p<75)return 2;if(p<80)return 2.5;if(p<85)return 3;if(p<90)return 4;if(p<95)return 5;if(p<100)return 6;if(p<105)return 7;return 8}
+function parsear(t){return(t||'').trim().split('\n').filter(x=>x.trim()).map(l=>{const p=l.split('|').map(x=>x.trim());return{nombre:p[0]||'Sin nombre',id:p[1]||'-',alianza:p[2]||'-',poder:parseFloat(p[3])||0,acl:parseFloat(p[4])||0,muertes:parseFloat(p[5])||0,deads:parseFloat(p[6])||0}})}
+function analizar(){const js=parsear(input.value);let a=[],r=[],s=[];js.forEach(j=>{j.req=requisito(j.poder);if(j.poder>=50&&j.acl<j.req*.5){j.estado='Candidato a salida';j.clase='bad';s.push(j)}else if(j.poder>=50&&j.acl<j.req){j.estado='Baja contribución';j.clase='warn';r.push(j)}else if(j.muertes>=300||j.deads>=1){j.estado='Guerrero activo';j.clase='ok';a.push(j)}else{j.estado='Jugador útil / observar';j.clase='info';a.push(j)}});total.textContent=js.length;activos.textContent=a.length;muertos.textContent=r.length;salida.textContent=s.length;pintar('listaActivos',a);pintar('listaRiesgo',r);pintar('listaSalida',s);correo.innerHTML=`📢 Aviso Reino 1992<br><br>Se informa que los jugadores con alto poder y baja aclamación serán revisados. Quienes no cumplan los requisitos mínimos deberán mejorar su contribución o podrán ser considerados para salida del reino.<br><br>Jugadores en lista de salida detectados: <b>${s.length}</b>.<br><br>— Patito`}
+function pintar(id,arr){const b=document.getElementById(id);if(!arr.length){b.innerHTML='<p class="help">Sin jugadores en esta categoría.</p>';return}b.innerHTML=arr.map(j=>`<div class="player"><span class="tag ${j.clase||'info'}">${j.estado||'Detectado'}</span><br><b>${j.nombre}</b> | ID: ${j.id}<br>Alianza: ${j.alianza} | Poder: ${j.poder}M<br>Aclamación: ${j.acl}M ${j.req!==undefined?'/ Req: '+j.req+'M':''}</div>`).join('')}
+function compararSemanas(){const ant=parsear(semanaAnterior.value),act=parsear(semanaActual.value),ma=new Map(ant.map(j=>[j.id,j])),mc=new Map(act.map(j=>[j.id,j]));let n=[],i=[],su=[],ba=[];act.forEach(j=>{const o=ma.get(j.id);if(!o){j.estado='Nuevo o volvió al reino';j.clase='new';n.push(j)}else{const d=+(j.poder-o.poder).toFixed(2);if(d>=1){j.estado=`Subió +${d}M de poder`;j.clase='ok';su.push(j)}if(d<=-1){j.estado=`Bajó ${d}M de poder`;j.clase='warn';ba.push(j)}}});ant.forEach(j=>{if(!mc.has(j.id)){j.estado='No aparece: posible migración o cambio de reino';j.clase='gone';i.push(j)}});pintar('nuevos',n);pintar('idos',i);pintar('subieron',su);pintar('bajaron',ba);estadoComparacion.textContent=`Comparación lista: ${n.length} nuevos, ${i.length} no aparecen, ${su.length} subieron y ${ba.length} bajaron.`}
+function guardar(campo,clave){localStorage.setItem(clave,document.getElementById(campo).value);localStorage.setItem(clave+'_fecha',new Date().toLocaleString());mensaje('Datos guardados correctamente.')}function cargar(campo,clave){document.getElementById(campo).value=localStorage.getItem(clave)||'';mensaje('Datos cargados.');actualizarFecha()}function limpiarCampo(campo){document.getElementById(campo).value='';mensaje('Campo limpiado.')}function limpiarComparacion(){semanaAnterior.value='';semanaActual.value='';['nuevos','idos','subieron','bajaron'].forEach(id=>document.getElementById(id).innerHTML='');estadoComparacion.textContent='Comparación limpiada.'}
+function pasarActualAAnterior(){semanaAnterior.value=semanaActual.value;guardar('semanaAnterior','pk_semana_anterior');estadoComparacion.textContent='La semana actual pasó a ser semana anterior.'}
+function mensaje(t){estadoGuardado.textContent=t;estadoComparacion.textContent=t;actualizarFecha();setTimeout(()=>{estadoGuardado.textContent=''},3000)}function actualizarFecha(){const f=localStorage.getItem('pk_lista_actual_fecha');fechaActualizacion.textContent=f?'Última lista guardada: '+f:'Sin datos guardados'}window.onload=()=>{actualizarFecha()}
+</script></body></html>
