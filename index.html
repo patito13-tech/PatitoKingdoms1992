@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Patito Kingdoms 1992</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}
+    body{background:#080b12;color:#f4f6fb;min-height:100vh}
+    header{padding:28px 18px;text-align:center;background:linear-gradient(135deg,#111827,#1f2937,#78350f);border-bottom:1px solid #374151}
+    header h1{font-size:34px;margin-bottom:8px;color:#facc15}
+    header p{color:#d1d5db;font-size:15px}
+    .container{max-width:1200px;margin:auto;padding:22px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px;margin-bottom:20px}
+    .card{background:#111827;border:1px solid #374151;border-radius:16px;padding:18px;box-shadow:0 10px 25px rgba(0,0,0,.25)}
+    .card h3{color:#facc15;margin-bottom:8px;font-size:15px}
+    .number{font-size:30px;font-weight:bold}
+    textarea{width:100%;height:210px;background:#030712;color:#e5e7eb;border:1px solid #374151;border-radius:14px;padding:14px;font-size:14px;resize:vertical;outline:none}
+    button{background:#facc15;color:#111827;border:0;border-radius:12px;padding:13px 18px;font-weight:bold;cursor:pointer;margin-top:12px}
+    button:hover{background:#fde047}
+    .results{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:15px;margin-top:20px}
+    .tag{display:inline-block;padding:5px 9px;border-radius:999px;font-size:12px;margin:3px 0;font-weight:bold}
+    .ok{background:#064e3b;color:#a7f3d0}.warn{background:#78350f;color:#fde68a}.bad{background:#7f1d1d;color:#fecaca}.info{background:#1e3a8a;color:#bfdbfe}
+    .player{border-bottom:1px solid #374151;padding:10px 0;font-size:14px;line-height:1.5}
+    .help{color:#9ca3af;font-size:13px;margin:10px 0 14px;line-height:1.5}
+    footer{text-align:center;color:#6b7280;padding:20px;font-size:13px}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🐥 Patito Kingdoms 1992</h1>
+    <p>IA Administradora del Reino para Rise of Kingdoms</p>
+  </header>
+
+  <main class="container">
+    <section class="grid">
+      <div class="card"><h3>Jugadores analizados</h3><div class="number" id="total">0</div></div>
+      <div class="card"><h3>Guerreros / útiles</h3><div class="number" id="activos">0</div></div>
+      <div class="card"><h3>Peso muerto</h3><div class="number" id="muertos">0</div></div>
+      <div class="card"><h3>Lista de salida</h3><div class="number" id="salida">0</div></div>
+    </section>
+
+    <section class="card">
+      <h2>📋 Pegar lista de jugadores</h2>
+      <p class="help">Formato recomendado por línea: Nombre | ID | Alianza | PoderM | AclamaciónM | MuertesM | DeadsM<br>Ejemplo: Patito | 123456 | GO92 | 85 | 4.5 | 600 | 2.1</p>
+      <textarea id="input" placeholder="Patito | 123456 | GO92 | 85 | 4.5 | 600 | 2.1&#10;Jugador2 | 987654 | GD92 | 90 | 1.2 | 80 | 0.3"></textarea>
+      <button onclick="analizar()">Analizar Reino con IA</button>
+    </section>
+
+    <section class="results">
+      <div class="card"><h3>✅ Jugadores útiles</h3><div id="listaActivos"></div></div>
+      <div class="card"><h3>⚠️ Riesgo / baja contribución</h3><div id="listaRiesgo"></div></div>
+      <div class="card"><h3>🚫 Lista de salida</h3><div id="listaSalida"></div></div>
+      <div class="card"><h3>📨 Correo sugerido</h3><div id="correo" class="help">Aquí aparecerá un mensaje automático para el reino.</div></div>
+    </section>
+  </main>
+
+  <footer>Creado para el Reino 1992 | Patito Kingdoms 1992</footer>
+
+  <script>
+    function requisito(poder){
+      if(poder < 40) return 0;
+      if(poder < 50) return .5;
+      if(poder < 55) return .8;
+      if(poder < 60) return 1;
+      if(poder < 65) return 1.3;
+      if(poder < 70) return 1.7;
+      if(poder < 75) return 2;
+      if(poder < 80) return 2.5;
+      if(poder < 85) return 3;
+      if(poder < 90) return 4;
+      if(poder < 95) return 5;
+      if(poder < 100) return 6;
+      if(poder < 105) return 7;
+      return 8;
+    }
+
+    function analizar(){
+      const texto=document.getElementById('input').value.trim();
+      const lineas=texto?texto.split('\n').filter(x=>x.trim()):[];
+      let activos=[], riesgo=[], salida=[];
+
+      lineas.forEach(l=>{
+        const p=l.split('|').map(x=>x.trim());
+        const nombre=p[0]||'Sin nombre';
+        const id=p[1]||'-';
+        const alianza=p[2]||'-';
+        const poder=parseFloat(p[3])||0;
+        const acl=parseFloat(p[4])||0;
+        const muertes=parseFloat(p[5])||0;
+        const deads=parseFloat(p[6])||0;
+        const req=requisito(poder);
+        let estado='', clase='';
+
+        if(poder>=50 && acl < req*0.5){estado='Candidato a salida';clase='bad';salida.push({nombre,id,alianza,poder,acl,req,estado,clase});}
+        else if(poder>=50 && acl < req){estado='Baja contribución';clase='warn';riesgo.push({nombre,id,alianza,poder,acl,req,estado,clase});}
+        else if(muertes>=300 || deads>=1){estado='Guerrero activo';clase='ok';activos.push({nombre,id,alianza,poder,acl,req,estado,clase});}
+        else {estado='Jugador útil / observar';clase='info';activos.push({nombre,id,alianza,poder,acl,req,estado,clase});}
+      });
+
+      document.getElementById('total').textContent=lineas.length;
+      document.getElementById('activos').textContent=activos.length;
+      document.getElementById('muertos').textContent=riesgo.length;
+      document.getElementById('salida').textContent=salida.length;
+      pintar('listaActivos',activos);
+      pintar('listaRiesgo',riesgo);
+      pintar('listaSalida',salida);
+      document.getElementById('correo').innerHTML=`📢 Aviso Reino 1992<br><br>Se informa que los jugadores con alto poder y baja aclamación serán revisados. Quienes no cumplan los requisitos mínimos deberán mejorar su contribución o podrán ser considerados para salida del reino.<br><br>Jugadores en lista de salida detectados: <b>${salida.length}</b>.<br><br>— Patito`;
+    }
+
+    function pintar(id,arr){
+      const box=document.getElementById(id);
+      if(!arr.length){box.innerHTML='<p class="help">Sin jugadores en esta categoría.</p>';return;}
+      box.innerHTML=arr.map(j=>`<div class="player"><span class="tag ${j.clase}">${j.estado}</span><br><b>${j.nombre}</b> | ID: ${j.id}<br>Alianza: ${j.alianza} | Poder: ${j.poder}M<br>Aclamación: ${j.acl}M / Req: ${j.req}M</div>`).join('');
+    }
+  </script>
+</body>
+</html>
